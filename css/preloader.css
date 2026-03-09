@@ -1,0 +1,106 @@
+/* css/preloader.css */
+
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-preloader);
+  gap: var(--gap-md);
+}
+
+/* ── Alchemical symbol ── */
+.preloader-symbol {
+  width: clamp(80px, 12vw, 120px);
+  height: clamp(80px, 12vw, 120px);
+  margin-bottom: var(--gap-sm);
+}
+
+.alchemy-symbol {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.sym-outer-ring {
+  stroke: var(--accent-primary);
+  opacity: 0;
+  transform-origin: 50px 50px;
+  animation: rotateRing 8s linear infinite;
+}
+
+.sym-triangle {
+  stroke: var(--accent-primary);
+  opacity: 0;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+}
+
+.sym-triangle-inv {
+  stroke: var(--accent-warm);
+  opacity: 0;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+}
+
+.sym-inner {
+  fill: var(--accent-primary);
+  opacity: 0;
+  transform-origin: 50px 50px;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(212,168,67,0.3)); }
+  50%       { filter: drop-shadow(0 0 18px rgba(212,168,67,0.7)); }
+}
+
+/* ── Phase text ── */
+.preloader-phase {
+  height: 2.5rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.phase-word {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* ── Animated line ── */
+.preloader-line {
+  width: 0;
+  height: 1px;
+  background: var(--accent-primary);
+  opacity: 0.5;
+  /* width animated by GSAP */
+}
+
+/* ── Counter ── */
+.preloader-counter {
+  font-family: var(--font-display);
+  font-size: var(--small-size);
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  min-height: 1.5em;
+  opacity: 0;
+}
+
+/* ── Preloader exit ── */
+#preloader.is-done {
+  pointer-events: none;
+}

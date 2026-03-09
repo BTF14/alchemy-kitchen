@@ -1,0 +1,227 @@
+/* css/responsive.css — Breakpoints + @supports legacy fallbacks */
+
+/* ───────────────────────────────────────────────────
+   @supports FALLBACKS (old browser progressive enhancement)
+   ─────────────────────────────────────────────────── */
+
+/* Fallback: no CSS Grid support → flexbox layout */
+@supports not (display: grid) {
+  .calc-controls {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .ctrl-group {
+    flex: 1 1 180px;
+  }
+  .about-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .about-card {
+    flex: 1 1 280px;
+  }
+  .materials-grid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .material-chip {
+    flex: 0 0 auto;
+  }
+  .calc-pricing-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .pricing-inputs, .pricing-output {
+    flex: 1 1 240px;
+  }
+  .pricing-divider {
+    width: 100%;
+    height: 1px;
+  }
+}
+
+/* Fallback: no CSS Custom Properties → static values */
+@supports not (color: var(--bg-dark)) {
+  body {
+    background-color: #0B0906;
+    color: #EDD9A3;
+    font-family: 'Georgia', serif;
+  }
+  .btn-primary {
+    background-color: #D4A843;
+    color: #0B0906;
+  }
+  #navbar {
+    background-color: rgba(11, 9, 6, 0.92);
+  }
+  .section-label {
+    color: #D4A843;
+  }
+}
+
+/* Fallback: no clamp() → static rem values */
+@supports not (font-size: clamp(1rem, 2vw, 2rem)) {
+  h1 { font-size: 3.5rem; }
+  h2 { font-size: 2.5rem; }
+  h3 { font-size: 1.5rem; }
+  body { font-size: 1.1rem; }
+  .section-padding { padding: 6rem 3rem; }
+}
+
+/* Fallback: no backdrop-filter → solid background */
+@supports not (backdrop-filter: blur(1px)) {
+  #navbar.scrolled {
+    background: rgba(11, 9, 6, 0.97);
+  }
+}
+
+/* Fallback: no fit-content → auto width centered */
+@supports not (width: fit-content) {
+  .btn-primary {
+    display: inline-block;
+    width: auto;
+    margin: 0 auto;
+  }
+}
+
+/* Fallback: no gap on flex → margin approach */
+@supports not (gap: 1rem) {
+  .nav-links .nav-link + .nav-link { margin-left: 2rem; }
+  .footer-nav a + a { margin-left: 1.5rem; }
+  .tier-recipes .recipe-tag + .recipe-tag { margin: 0 0 0.25rem 0.25rem; }
+}
+
+/* ───────────────────────────────────────────────────
+   RESPONSIVE BREAKPOINTS
+   ─────────────────────────────────────────────────── */
+
+/* ── Large desktop (1440px+) ── */
+@media (min-width: 1440px) {
+  .section-inner {
+    max-width: 1300px;
+  }
+}
+
+/* ── Medium desktop to tablet (1024px–768px) ── */
+@media (max-width: 1024px) {
+  .calc-pricing-panel {
+    grid-template-columns: 1fr;
+  }
+  .pricing-divider {
+    width: 100%;
+    height: 1px;
+  }
+  .tier-entry {
+    grid-template-columns: 60px 1fr;
+    gap: var(--gap-md);
+  }
+}
+
+/* ── Tablet to mobile (768px) ── */
+@media (max-width: 768px) {
+  /* Navbar: show toggle, hide nav-links */
+  .nav-links { display: none; }
+  .lang-btn  { display: none; }
+  #menu-toggle { display: flex; }
+
+  /* Navbar/toggle shared height */
+  #navbar,
+  #menu-toggle {
+    height: 60px;
+  }
+
+  /* Sections */
+  .section-inner { padding: 0; }
+  .section-standard { padding: 4rem 1.5rem; }
+  .section-header { max-width: 100%; }
+  .section-title { white-space: normal; }
+
+  /* Hero */
+  #hero { padding-top: 60px; }
+  .title-accent { font-size: calc(var(--h1-size) * 1.05); }
+  .hero-particles { display: none; } /* Reduce motion budget on mobile */
+
+  /* Calculator controls: 2 columns */
+  .calc-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ctrl-group:nth-child(2n) { border-right: none; }
+  .ctrl-group:nth-child(n+3) { border-top: var(--border-subtle); }
+
+  /* Pricing panel: stack */
+  .calc-pricing-panel {
+    grid-template-columns: 1fr;
+    gap: var(--gap-md);
+  }
+  .pricing-divider {
+    width: 100%;
+    height: 1px;
+    min-height: 0;
+  }
+
+  /* Tiers */
+  .tier-entry {
+    grid-template-columns: 50px 1fr;
+    gap: var(--gap-sm);
+  }
+  .tier-badge {
+    width: 40px;
+    height: 40px;
+    font-size: 0.6rem;
+  }
+
+  /* About cards */
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Footer */
+  #footer {
+    padding: 4rem 1.5rem;
+  }
+}
+
+/* ── Small mobile (480px) ── */
+@media (max-width: 480px) {
+  .calc-controls {
+    grid-template-columns: 1fr;
+  }
+  .ctrl-group {
+    border-right: none !important;
+  }
+  .ctrl-group + .ctrl-group {
+    border-top: var(--border-subtle);
+  }
+  .recipe-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .materials-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-ring,
+  .hero-geo,
+  .hero-hex,
+  .orbit-dot,
+  .particle,
+  .scroll-line {
+    animation: none !important;
+  }
+  #cursor-glow,
+  #cursor-dot {
+    display: none !important;
+  }
+  .scroll-element {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  #app-content {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}

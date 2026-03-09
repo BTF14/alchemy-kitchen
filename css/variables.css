@@ -1,0 +1,76 @@
+/* css/variables.css — Design tokens & Okich cursor color system */
+
+:root {
+  /* ── Palette (Okich alchemical dark theme) ── */
+  --bg-dark:        #0B0906;   /* COLOR-1: near-black warm */
+  --bg-darker:      #080705;   /* COLOR-1 darkened */
+  --bg-card:        #13100B;   /* Slightly lighter for cards */
+  --accent-deep:    #3A2408;   /* COLOR-2: deep amber bark */
+  --accent-mid:     #7C5C2A;   /* COLOR-3: tarnished bronze */
+  --accent-primary: #D4A843;   /* COLOR-4: alchemical gold */
+  --accent-warm:    #C9784A;   /* Copper warm secondary */
+  --text-light:     #EDD9A3;   /* COLOR-5: aged parchment */
+  --text-muted:     rgba(237, 217, 163, 0.45);
+
+  /* ── Okich Cursor Color System ── */
+  /* Named after the warm amber-copper tonal range */
+  --okich-core:       rgba(212, 168, 67, 0.85);   /* Gold core dot */
+  --okich-inner:      rgba(212, 168, 67, 0.35);   /* Inner glow */
+  --okich-mid:        rgba(180, 100, 30, 0.12);   /* Mid diffusion */
+  --okich-outer:      rgba(140, 70, 10, 0.04);    /* Outer atmosphere */
+  --okich-glow-size:  360px;
+
+  /* ── Fluid typography (clamp for responsive scaling) ── */
+  --h1-size:     clamp(2.8rem, 8vw, 6.5rem);
+  --h2-size:     clamp(2rem, 5vw, 3.8rem);
+  --h3-size:     clamp(1.2rem, 2.5vw, 1.7rem);
+  --body-size:   clamp(1rem, 1.8vw, 1.2rem);
+  --small-size:  clamp(0.72rem, 1.4vw, 0.875rem);
+  --label-size:  clamp(0.65rem, 1.2vw, 0.78rem);
+
+  /* ── Fonts ── */
+  --font-display: 'Cinzel', 'Palatino Linotype', 'Book Antiqua', Palatino, serif;
+  --font-body:    'Lora', 'Georgia', 'Times New Roman', serif;
+  --font-mono:    'Courier New', Courier, monospace;
+
+  /* ── Z-index scale (FIXED per ia.md §3.B) ── */
+  --z-content:    1;
+  --z-nav:        100;
+  --z-cursor:     150;
+  --z-menu:       200;
+  --z-preloader:  999;
+
+  /* ── Spacing ── */
+  --gap-xs:           clamp(0.25rem, 1vw, 0.5rem);
+  --gap-sm:           clamp(0.5rem, 2vw, 1rem);
+  --gap-md:           clamp(1rem, 3vw, 2rem);
+  --gap-lg:           clamp(2rem, 5vw, 3.5rem);
+  --gap-xl:           clamp(3rem, 7vw, 6rem);
+  --section-padding:  clamp(5rem, 12vh, 9rem) clamp(1.5rem, 6vw, 7rem);
+
+  /* ── Transitions ── */
+  --dur-fast:      0.25s;
+  --dur-normal:    0.55s;
+  --dur-slow:      1s;
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1);   /* expo.out */
+  --ease-inout:    cubic-bezier(0.45, 0, 0.55, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Borders ── */
+  --border-subtle:  1px solid rgba(212, 168, 67, 0.08);
+  --border-mid:     1px solid rgba(212, 168, 67, 0.2);
+  --border-strong:  1px solid rgba(212, 168, 67, 0.5);
+
+  /* ── Radii ── */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-pill: 100px;
+
+  /* ── Shadows ── */
+  --glow-sm:   0 0 15px rgba(212, 168, 67, 0.15);
+  --glow-md:   0 0 30px rgba(212, 168, 67, 0.2);
+  --glow-lg:   0 0 60px rgba(212, 168, 67, 0.25);
+}
+
+/* ── Legacy fallback: CSS Custom Properties not supported ──
+   @supports used to detect, support.js handles JS-side fallback */

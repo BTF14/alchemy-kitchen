@@ -1,0 +1,222 @@
+/* css/nav.css — Navbar + cursor elements */
+
+/* ── Cursor (Okich system) ── */
+#cursor-glow {
+  position: fixed;
+  width: var(--okich-glow-size);
+  height: var(--okich-glow-size);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--okich-inner)  0%,
+    var(--okich-mid)    40%,
+    var(--okich-outer)  70%,
+    transparent         100%
+  );
+  pointer-events: none;
+  z-index: var(--z-cursor);
+  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  will-change: transform;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#cursor-dot {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--okich-core);
+  pointer-events: none;
+  z-index: calc(var(--z-cursor) + 1);
+  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+/* Cursor states */
+body.cursor-hover #cursor-dot {
+  width: 14px;
+  height: 14px;
+  background: var(--accent-primary);
+}
+
+body.cursor-ready #cursor-glow,
+body.cursor-ready #cursor-dot {
+  opacity: 1;
+}
+
+/* ── Navbar ── */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  padding: 0 clamp(1.5rem, 5vw, 4rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: var(--z-nav);
+  /* No mix-blend-mode / transform / filter — avoids stacking context trap §6.B */
+  transition: background var(--dur-normal) var(--ease-out),
+              border-color var(--dur-normal) var(--ease-out);
+}
+
+#navbar.scrolled {
+  background: rgba(11, 9, 6, 0.92);
+  border-bottom: var(--border-subtle);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Nav Logo ── */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  line-height: 1;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.nav-logo:hover {
+  opacity: 0.75;
+}
+
+.logo-sigil {
+  font-size: 1.2rem;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-light);
+}
+
+/* ── Nav links ── */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-lg);
+}
+
+.nav-link {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  position: relative;
+  transition: color var(--dur-fast) ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent-primary);
+  transition: width var(--dur-normal) var(--ease-out);
+}
+
+.nav-link:hover {
+  color: var(--accent-primary);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ── Language toggle ── */
+.lang-btn {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 10px;
+  border: var(--border-subtle);
+  border-radius: var(--radius-pill);
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.lang-btn:hover {
+  color: var(--accent-primary);
+  border-color: rgba(212, 168, 67, 0.3);
+}
+
+.lang-sep {
+  opacity: 0.3;
+}
+
+/* Active language highlight based on data-lang attribute */
+[data-lang="es"] .lang-es,
+[data-lang="en"] .lang-en {
+  color: var(--accent-primary);
+}
+
+/* ── Menu Toggle (§6.B: outside navbar DOM) ── */
+#menu-toggle {
+  position: fixed;
+  top: 0;
+  right: clamp(1.5rem, 5vw, 4rem);
+  height: 72px;                 /* SAME as #navbar §6.K */
+  width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  z-index: calc(var(--z-menu) + 10); /* Above overlay §6.B */
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* Hide on larger screens — nav links handle navigation */
+@media (min-width: 769px) {
+  #menu-toggle {
+    display: none;
+  }
+}
+
+.toggle-bar {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: var(--text-light);
+  border-radius: 2px;
+  transform-origin: center;
+  transition: transform var(--dur-normal) var(--ease-out),
+              opacity var(--dur-fast) ease,
+              width var(--dur-normal) var(--ease-out);
+  will-change: transform, opacity;
+}
+
+#menu-toggle[aria-expanded="true"] .bar-1 {
+  transform: translateY(6.5px) rotate(45deg);
+}
+#menu-toggle[aria-expanded="true"] .bar-2 {
+  opacity: 0;
+  width: 0;
+}
+#menu-toggle[aria-expanded="true"] .bar-3 {
+  transform: translateY(-6.5px) rotate(-45deg);
+}

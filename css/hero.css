@@ -1,0 +1,227 @@
+/* css/hero.css — Hero section with parallax */
+
+#hero {
+  padding-top: 72px; /* navbar height */
+  text-align: center;
+}
+
+/* ── Background container (parallax target) ── */
+.hero-bg-container {
+  position: absolute;
+  inset: -20%; /* Extra room for parallax movement */
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-bg-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.hero-svg-bg {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  /* GSAP ScrollTrigger controls transform for parallax */
+}
+
+/* Animated SVG rings */
+.hero-ring {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: heroRingPulse 6s ease-in-out infinite alternate;
+}
+.ring-1 { animation-delay: 0s; }
+.ring-2 { animation-delay: 1s; }
+.ring-3 { animation-delay: 2s; }
+
+@keyframes heroRingPulse {
+  from { opacity: 0.08; }
+  to   { opacity: 0.22; }
+}
+
+.hero-geo {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: heroGeoRotate 40s linear infinite;
+}
+.hero-geo:last-of-type {
+  animation-direction: reverse;
+  animation-duration: 55s;
+}
+
+@keyframes heroGeoRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.hero-hex {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: heroHexPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes heroHexPulse {
+  from { opacity: 0.25; filter: drop-shadow(0 0 4px rgba(212,168,67,0.3)); }
+  to   { opacity: 0.6;  filter: drop-shadow(0 0 12px rgba(212,168,67,0.6)); }
+}
+
+.orbit-dot {
+  animation: orbitFloat 3s ease-in-out infinite alternate;
+}
+.orbit-dot:nth-child(2) { animation-delay: 1s; }
+.orbit-dot:nth-child(3) { animation-delay: 2s; }
+
+@keyframes orbitFloat {
+  from { r: 2.5; opacity: 0.4; }
+  to   { r: 4;   opacity: 0.9; }
+}
+
+/* ── Gradient overlay ── */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(42,31,10,0.3) 0%, transparent 70%),
+    linear-gradient(to bottom, rgba(11,9,6,0.4) 0%, rgba(11,9,6,0.1) 30%, rgba(11,9,6,0.5) 70%, var(--bg-dark) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Hero content ── */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  padding: var(--gap-xl) var(--gap-md);
+  width: 100%;
+  will-change: transform, opacity;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: var(--gap-md);
+  opacity: 0.75;
+}
+
+.hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2em;
+  margin-bottom: var(--gap-md);
+}
+
+.title-line {
+  display: block;
+  font-size: var(--h1-size);
+  font-weight: 900;
+  color: var(--text-light);
+  line-height: 1;
+}
+
+.title-accent {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent-primary);
+  font-size: calc(var(--h1-size) * 1.15);
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 40px rgba(212, 168, 67, 0.35);
+}
+
+.hero-desc {
+  max-width: 580px;
+  margin: 0 auto var(--gap-lg);
+  font-size: var(--body-size);
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+.hero-cta {
+  margin-bottom: var(--gap-xl);
+}
+
+/* ── Scroll indicator ── */
+.hero-scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-sm);
+  margin-top: var(--gap-xl);
+}
+
+.scroll-line {
+  display: block;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--accent-primary));
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+  50%       { opacity: 1;   transform: scaleY(1); }
+}
+
+.scroll-label {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+}
+
+/* ── Floating particles ── */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  color: var(--accent-primary);
+  font-size: clamp(0.6rem, 1.5vw, 1rem);
+  opacity: 0;
+  animation: particleDrift var(--dur) ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.p1 { left: 10%; top: 20%; --dur: 8s;  animation-delay: 0s; }
+.p2 { left: 80%; top: 15%; --dur: 11s; animation-delay: 2s; }
+.p3 { left: 25%; top: 75%; --dur: 9s;  animation-delay: 4s; }
+.p4 { left: 70%; top: 65%; --dur: 12s; animation-delay: 1s; }
+.p5 { left: 50%; top: 85%; --dur: 10s; animation-delay: 3s; }
+
+@keyframes particleDrift {
+  0%   { opacity: 0;    transform: translateY(0) rotate(0deg); }
+  20%  { opacity: 0.4;  }
+  80%  { opacity: 0.25; }
+  100% { opacity: 0;    transform: translateY(-60px) rotate(180deg); }
+}
+
+/* ── Features/CTA section (reuses hero styles) ── */
+.section-cta {
+  text-align: center;
+}
+
+.features-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: var(--gap-xl) var(--gap-md);
+  width: 100%;
+}
+
+.features-content .section-label { margin-bottom: var(--gap-md); }
+.features-content .section-title { margin-bottom: var(--gap-md); font-size: var(--h2-size); color: var(--text-light); }
+.features-content .hero-desc { margin-bottom: var(--gap-lg); }

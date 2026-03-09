@@ -1,0 +1,223 @@
+/* css/sections.css — About, Tiers, and Features sections */
+
+/* ── About section ── */
+#about {
+  background: var(--bg-dark);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--gap-md);
+}
+
+.about-card {
+  padding: var(--gap-lg) var(--gap-md);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--dur-normal) var(--ease-out),
+              transform var(--dur-normal) var(--ease-out);
+}
+
+.about-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent-primary), transparent);
+  opacity: 0;
+  transition: opacity var(--dur-normal) ease;
+}
+
+.about-card:hover {
+  border-color: rgba(212, 168, 67, 0.22);
+  transform: translateY(-4px);
+}
+
+.about-card:hover::before {
+  opacity: 0.6;
+}
+
+.card-icon {
+  color: var(--accent-primary);
+  margin-bottom: var(--gap-md);
+  width: 48px;
+  height: 48px;
+  opacity: 0.7;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.about-card:hover .card-icon {
+  opacity: 1;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: var(--h3-size);
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: var(--gap-sm);
+  letter-spacing: 0.04em;
+}
+
+.card-desc {
+  font-size: var(--small-size);
+  color: var(--text-muted);
+  line-height: 1.75;
+}
+
+/* ── Tiers section ── */
+#tiers {
+  background: var(--bg-darker);
+  border-top: var(--border-subtle);
+  border-bottom: var(--border-subtle);
+  position: relative;
+}
+
+#tiers::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 100% 50%, rgba(58, 36, 8, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Timeline ── */
+.tiers-timeline {
+  position: relative;
+  max-width: 800px;
+}
+
+.tier-entry {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--gap-lg);
+  margin-bottom: var(--gap-xl);
+  position: relative;
+}
+
+.tier-entry:last-child {
+  margin-bottom: 0;
+}
+
+/* Marker column */
+.tier-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.tier-badge {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--bg-dark);
+  background: var(--accent-mid);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: background var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+}
+
+.tier-entry:hover .tier-badge {
+  background: var(--accent-primary);
+  box-shadow: var(--glow-sm);
+}
+
+.tier-badge--legendary {
+  background: var(--accent-primary);
+  box-shadow: var(--glow-sm);
+  animation: legendaryPulse 3s ease-in-out infinite;
+}
+
+@keyframes legendaryPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(212,168,67,0.3); }
+  50%       { box-shadow: 0 0 25px rgba(212,168,67,0.6); }
+}
+
+.tier-line {
+  width: 1px;
+  flex: 1;
+  background: linear-gradient(to bottom, rgba(212,168,67,0.3), rgba(212,168,67,0.05));
+  margin-top: 4px;
+  min-height: 40px;
+}
+
+.tier-line--last {
+  background: transparent;
+}
+
+/* Content column */
+.tier-content {
+  padding-top: 10px;
+  padding-bottom: var(--gap-md);
+}
+
+.tier-name {
+  font-family: var(--font-display);
+  font-size: var(--h3-size);
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: var(--gap-sm);
+  letter-spacing: 0.03em;
+}
+
+.tier-desc {
+  font-size: var(--small-size);
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: var(--gap-md);
+  max-width: 520px;
+}
+
+.tier-recipes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-xs);
+}
+
+.recipe-tag {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  background: rgba(212, 168, 67, 0.06);
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.recipe-tag:hover {
+  background: rgba(212, 168, 67, 0.12);
+  border-color: rgba(212, 168, 67, 0.35);
+}
+
+.recipe-tag--legendary {
+  color: var(--bg-dark);
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-sm);
+}
+
+/* ── Features section (inherits hero BG structure) ── */
+#features .features-bg-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}

@@ -1,0 +1,225 @@
+/* css/global.css — Base styles, typography, utility classes */
+
+/* ── Anti-FOUC: app content hidden until orchestrator reveals it ── */
+#app-content {
+  visibility: hidden;
+  opacity: 0;
+  will-change: opacity, visibility;
+}
+
+/* ── Scroll elements start invisible (anti-FOUC for inner elements §6.A) ── */
+.scroll-element {
+  opacity: 0;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+/* ── Base ── */
+html {
+  background-color: var(--bg-dark);
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  line-height: 1.7;
+}
+
+/* Text selection */
+::selection {
+  background-color: var(--accent-primary);
+  color: var(--bg-dark);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-darker);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-mid);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* ── Custom cursor: hide default on desktop ── */
+@media (pointer: fine) {
+  html, body {
+    cursor: none;
+  }
+  a, button, [role="button"], input, select, label {
+    cursor: none;
+  }
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  color: var(--text-light);
+}
+
+h1 { font-size: var(--h1-size); }
+h2 { font-size: var(--h2-size); }
+h3 { font-size: var(--h3-size); }
+
+p {
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+/* ── Section structure ── */
+.section-standard {
+  position: relative;
+  padding: var(--section-padding);
+  z-index: var(--z-content);
+}
+
+.section-fullscreen {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: var(--z-content);
+}
+
+.section-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-header {
+  margin-bottom: var(--gap-xl);
+  max-width: 700px;
+}
+
+.section-label {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: var(--gap-sm);
+}
+
+.section-title {
+  white-space: pre-line;
+  color: var(--text-light);
+  margin-bottom: var(--gap-md);
+}
+
+.section-subtitle {
+  font-size: var(--body-size);
+  max-width: 560px;
+  color: var(--text-muted);
+}
+
+/* ── Primary CTA Button (§6.F pattern) ── */
+.btn-primary {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 12px 32px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1;
+  color: var(--bg-dark);
+  background-color: var(--accent-primary);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+}
+
+/* Text span must be above glow (§7.C) */
+.btn-primary > span:not(.btn-glow) {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+}
+
+/* Glow element (§7.C — three-layer stacking model) */
+.btn-primary .btn-glow {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  top: 0;
+  left: 0;
+}
+
+/* ── Image utility ── */
+.img-container {
+  overflow: hidden;
+  position: relative;
+}
+
+img.no-gap {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform: scale(1.15);
+}
+
+/* ── Animated element base ── */
+.animated-element {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+/* ── Decorative divider ── */
+.alq-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--accent-primary);
+  margin: var(--gap-md) auto;
+  opacity: 0.6;
+}
+
+/* ── Noise texture overlay ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 998;
+  opacity: 0.4;
+}

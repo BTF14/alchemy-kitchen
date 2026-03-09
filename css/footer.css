@@ -1,0 +1,149 @@
+/* css/footer.css */
+
+#footer {
+  background: var(--bg-darker);
+  padding: clamp(4rem, 10vh, 7rem) clamp(1.5rem, 5vw, 4rem);
+  border-top: 1px solid rgba(212, 168, 67, 0.1);
+  text-align: center;
+}
+
+.footer-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+/* Footer brand (display font, large) */
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: var(--h2-size);
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 0.08em;
+}
+
+/* Footer tagline (small, muted) */
+.footer-tagline {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Divider bar */
+.footer-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-pill);
+  opacity: 0.6;
+}
+
+/* Footer nav */
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-md);
+}
+
+.footer-nav a {
+  font-family: var(--font-display);
+  font-size: var(--label-size);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color var(--dur-fast) ease;
+}
+
+.footer-nav a:hover {
+  color: var(--accent-primary);
+}
+
+/* Email (dual-mode: desktop copy / mobile mailto) */
+.footer-email {
+  position: relative;
+}
+
+#email-btn {
+  display: inline-block;
+  overflow: visible;
+  border: var(--border-mid);
+  border-radius: var(--radius-pill);
+  padding: 10px 24px;
+  font-family: var(--font-display);
+  font-size: var(--small-size);
+  letter-spacing: 0.08em;
+  color: var(--accent-primary);
+  background: none;
+  position: relative;
+  transition: border-color var(--dur-fast) ease,
+              color var(--dur-fast) ease,
+              box-shadow var(--dur-fast) ease;
+}
+
+#email-btn:hover {
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: var(--glow-sm);
+}
+
+.email-feedback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-primary);
+  color: var(--bg-dark);
+  border-radius: var(--radius-pill);
+  font-size: var(--small-size);
+  font-family: var(--font-display);
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease;
+  pointer-events: none;
+}
+
+#email-btn.copied .email-text {
+  opacity: 0;
+}
+
+#email-btn.copied .email-feedback {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Desktop: show button, hide mailto */
+.email-mobile-link { display: none; }
+
+/* Mobile: hide button, show mailto */
+@media (hover: none) {
+  #email-btn { display: none; }
+  .email-mobile-link {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: var(--small-size);
+    letter-spacing: 0.08em;
+    color: var(--accent-primary);
+    border: var(--border-mid);
+    border-radius: var(--radius-pill);
+    padding: 10px 24px;
+  }
+}
+
+/* Footer copyright */
+.footer-copy {
+  font-family: var(--font-body);
+  font-size: var(--label-size);
+  color: var(--text-muted);
+  opacity: 0.5;
+  line-height: 1.6;
+  max-width: 500px;
+}
