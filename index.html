@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Calculadora de refinamiento de Alquimia Cocina para Albion Online. Transmuta ingredientes en ganancias. Optimiza tus recetas T3–T8 y maximiza tu plata.">
+  <meta name="theme-color" content="#0B0906">
+  <title>Alquimia Cocina — Calculadora de Refinamiento | Albion Online</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- Legacy support — synchronous, must be first JS -->
+  <script src="js/support.js"></script>
+
+  <!-- CSS cascade -->
+  <link rel="stylesheet" href="css/reset.css?v=1">
+  <link rel="stylesheet" href="css/variables.css?v=1">
+  <link rel="stylesheet" href="css/global.css?v=1">
+  <link rel="stylesheet" href="css/preloader.css?v=1">
+  <link rel="stylesheet" href="css/nav.css?v=1">
+  <link rel="stylesheet" href="css/menu.css?v=1">
+  <link rel="stylesheet" href="css/hero.css?v=1">
+  <link rel="stylesheet" href="css/calculator.css?v=1">
+  <link rel="stylesheet" href="css/sections.css?v=1">
+  <link rel="stylesheet" href="css/footer.css?v=1">
+  <link rel="stylesheet" href="css/responsive.css?v=1">
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+
+  <!-- Orchestrator -->
+  <script type="module" src="js/main.js?v=1" defer></script>
+
+  <noscript>
+    <style>
+      #preloader { display: none !important; }
+      #app-content { visibility: visible !important; opacity: 1 !important; }
+      body { overflow: auto !important; cursor: auto !important; }
+    </style>
+  </noscript>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     PRELOADER
+═══════════════════════════════════════════════════════ -->
+<div id="preloader" role="status" aria-label="Cargando aplicación">
+  <div class="preloader-symbol">
+    <svg viewBox="0 0 100 100" class="alchemy-symbol" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="sym-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+        </filter>
+      </defs>
+      <circle cx="50" cy="50" r="46" class="sym-outer-ring" fill="none" stroke-width="0.8" filter="url(#sym-glow)"/>
+      <polygon points="50,12 88,74 12,74"  class="sym-triangle"     fill="none" stroke-width="1.3" stroke="#D4A843"/>
+      <polygon points="50,88 12,26 88,26"  class="sym-triangle-inv" fill="none" stroke-width="0.9" stroke="#C9784A"/>
+      <circle cx="50" cy="50" r="11" class="sym-inner" fill="#D4A843"/>
+      <circle cx="50" cy="50" r="4"  fill="#0B0906" opacity="0.8"/>
+    </svg>
+  </div>
+  <div class="preloader-phase" id="preloader-phase">
+    <span class="phase-word">TRANSMUTANDO</span>
+  </div>
+  <div class="preloader-line"></div>
+  <p class="preloader-counter" aria-hidden="true">
+    <span id="preloader-pct">0</span>%
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     OKICH CURSOR
+═══════════════════════════════════════════════════════ -->
+<div id="cursor-glow" aria-hidden="true"></div>
+<div id="cursor-dot"  aria-hidden="true"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════════════════ -->
+<header id="navbar" role="banner">
+  <a href="#hero" class="nav-logo" aria-label="Alquimia Cocina — Inicio">
+    <span class="logo-sigil" aria-hidden="true">⬡</span>
+    <span class="logo-text" data-i18n="brand">ALQUIMIA COCINA</span>
+  </a>
+  <nav class="nav-links" aria-label="Navegación principal">
+    <a href="#calculator" class="nav-link" data-i18n="nav.calculator">Calculadora</a>
+    <a href="#tiers"      class="nav-link" data-i18n="nav.tiers">Niveles</a>
+    <a href="#about"      class="nav-link" data-i18n="nav.about">Acerca de</a>
+  </nav>
+  <button id="lang-toggle" class="lang-btn" aria-label="Cambiar idioma / Toggle language">
+    <span class="lang-es">ES</span>
+    <span class="lang-sep">/</span>
+    <span class="lang-en">EN</span>
+  </button>
+</header>
+
+<!-- MENU TOGGLE — sibling of navbar, never child (§6.B) -->
+<button
+  id="menu-toggle"
+  aria-label="Abrir menú"
+  aria-expanded="false"
+  aria-controls="menu-overlay"
+>
+  <span class="toggle-bar bar-1"></span>
+  <span class="toggle-bar bar-2"></span>
+  <span class="toggle-bar bar-3"></span>
+</button>
+
+<!-- ═══════════════════════════════════════════════════════
+     FULLSCREEN MENU
+═══════════════════════════════════════════════════════ -->
+<div id="menu-overlay" role="dialog" aria-modal="true" aria-label="Menú principal" aria-hidden="true">
+  <div class="menu-half menu-left"  aria-hidden="true"></div>
+  <div class="menu-half menu-right" aria-hidden="true"></div>
+  <nav class="menu-content" aria-label="Menú de navegación">
+    <ul class="menu-links" role="list">
+      <li><a href="#hero"       class="menu-link" data-i18n="menu.home">Inicio</a></li>
+      <li><a href="#calculator" class="menu-link" data-i18n="menu.calculator">Calculadora</a></li>
+      <li><a href="#tiers"      class="menu-link" data-i18n="menu.tiers">Niveles</a></li>
+      <li><a href="#about"      class="menu-link" data-i18n="menu.about">Acerca de</a></li>
+      <li><a href="#footer"     class="menu-link" data-i18n="menu.contact">Contacto</a></li>
+    </ul>
+    <div class="menu-footer-info">
+      <p class="menu-tagline" data-i18n="hero.tagline">La ciencia del sabor transmutado</p>
+      <div class="menu-lang-switcher">
+        <button class="menu-lang-btn" data-lang="es" aria-label="Español">Español</button>
+        <span aria-hidden="true">·</span>
+        <button class="menu-lang-btn" data-lang="en" aria-label="English">English</button>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     APP CONTENT — hidden until preloader resolves (§5)
+═══════════════════════════════════════════════════════ -->
+<div id="app-content">
+
+  <!-- ══════════════════════════════════════
+       HERO — Parallax + Scroll animations
+  ══════════════════════════════════════ -->
+  <section id="hero" class="section-fullscreen" aria-labelledby="hero-heading">
+
+    <!-- Parallax BG art (GSAP moves this on scroll) -->
+    <div class="hero-bg-container" aria-hidden="true">
+      <div class="hero-bg-art">
+        <svg class="hero-svg-bg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <radialGradient id="bgGrad1" cx="50%" cy="50%" r="70%">
+              <stop offset="0%"   stop-color="#2A1F0A" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0B0906" stop-opacity="1"/>
+            </radialGradient>
+            <filter id="heroGlowF" x="-25%" y="-25%" width="150%" height="150%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+          <rect width="1440" height="900" fill="url(#bgGrad1)"/>
+
+          <!-- Outer atmosphere rings -->
+          <circle cx="720" cy="450" r="420" fill="none" stroke="#D4A843" stroke-width="0.4" class="hero-ring ring-1"/>
+          <circle cx="720" cy="450" r="340" fill="none" stroke="#D4A843" stroke-width="0.5" class="hero-ring ring-2"/>
+          <circle cx="720" cy="450" r="240" fill="none" stroke="#C9784A" stroke-width="0.8" class="hero-ring ring-3"/>
+
+          <!-- Great triangle (rotating) -->
+          <polygon points="720,50 1180,800 260,800"   fill="none" stroke="#D4A843" stroke-width="0.6" class="hero-geo"/>
+          <!-- Inverted triangle -->
+          <polygon points="720,850 260,100 1180,100"  fill="none" stroke="#D4A843" stroke-width="0.5" class="hero-geo"/>
+
+          <!-- Center hexagon — glowing -->
+          <polygon points="720,345 810,397 810,501 720,553 630,501 630,397"
+                   fill="none" stroke="#D4A843" stroke-width="2" class="hero-hex" filter="url(#heroGlowF)"/>
+          <!-- Inner hexagon -->
+          <polygon points="720,385 768,412 768,466 720,493 672,466 672,412"
+                   fill="none" stroke="#D4A843" stroke-width="0.9" class="hero-hex"/>
+          <!-- Micro hexagon -->
+          <polygon points="720,415 746,430 746,460 720,475 694,460 694,430"
+                   fill="none" stroke="#C9784A" stroke-width="0.6" class="hero-hex"/>
+
+          <!-- Apex orbit dots -->
+          <circle cx="720"  cy="50"  r="4" fill="#D4A843" class="orbit-dot"/>
+          <circle cx="1180" cy="800" r="3.5" fill="#C9784A" class="orbit-dot"/>
+          <circle cx="260"  cy="800" r="3.5" fill="#C9784A" class="orbit-dot"/>
+          <circle cx="260"  cy="100" r="3" fill="#D4A843" class="orbit-dot"/>
+          <circle cx="1180" cy="100" r="3" fill="#D4A843" class="orbit-dot"/>
+
+          <!-- Meridian cross (very subtle) -->
+          <line x1="720" y1="0"   x2="720" y2="900"  stroke="#D4A843" stroke-width="0.25" opacity="0.07"/>
+          <line x1="0"   y1="450" x2="1440" y2="450" stroke="#D4A843" stroke-width="0.25" opacity="0.07"/>
+
+          <!-- Rune accents -->
+          <text x="720"  y="40"  text-anchor="middle" fill="#D4A843" font-size="14" opacity="0.5"  font-family="serif">✦</text>
+          <text x="1160" y="476" text-anchor="middle" fill="#D4A843" font-size="11" opacity="0.35" font-family="serif">◈</text>
+          <text x="280"  y="476" text-anchor="middle" fill="#D4A843" font-size="11" opacity="0.35" font-family="serif">◈</text>
+          <text x="720"  y="880" text-anchor="middle" fill="#D4A843" font-size="10" opacity="0.3"  font-family="serif">✦</text>
+        </svg>
+      </div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+    </div>
+
+    <!-- Floating sigils -->
+    <div class="hero-particles" aria-hidden="true">
+      <span class="particle p1">✦</span>
+      <span class="particle p2">◈</span>
+      <span class="particle p3">✦</span>
+      <span class="particle p4">⬡</span>
+      <span class="particle p5">◈</span>
+    </div>
+
+    <!-- Hero copy -->
+    <div class="hero-content">
+      <p class="hero-eyebrow scroll-element" data-i18n="hero.eyebrow">
+        Albion Online · Alquimia Cocina
+      </p>
+
+      <h1 id="hero-heading" class="hero-title">
+        <span class="title-line scroll-element" data-i18n="hero.title.l1">Transmuta lo</span>
+        <em    class="title-line title-accent scroll-element" data-i18n="hero.title.l2">ordinario</em>
+        <span class="title-line scroll-element" data-i18n="hero.title.l3">en legendario</span>
+      </h1>
+
+      <p class="hero-desc scroll-element" data-i18n="hero.desc">
+        Cada ingrediente tiene un destino. Cada receta, un potencial oculto.
+        Descubre cuánto vale realmente lo que cocinas.
+      </p>
+
+      <div class="hero-cta scroll-element">
+        <a href="#calculator" class="btn-primary" id="hero-cta-btn">
+          <span data-i18n="hero.cta">Iniciar transmutación</span>
+          <span class="btn-glow" aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="hero-scroll-indicator scroll-element" aria-hidden="true">
+        <span class="scroll-line"></span>
+        <span class="scroll-label" data-i18n="hero.scroll">Desciende</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       ABOUT
+  ══════════════════════════════════════ -->
+  <section id="about" class="section-standard" aria-labelledby="about-heading">
+    <div class="section-inner">
+      <header class="section-header">
+        <span class="section-label scroll-element" data-i18n="about.label">El Arte</span>
+        <h2 id="about-heading" class="section-title scroll-element" data-i18n="about.title">No es solo comida.
+Es alquimia económica.</h2>
+      </header>
+
+      <div class="about-grid" role="list">
+
+        <article class="about-card" role="listitem">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 60 60" width="48" height="48" fill="none">
+              <circle cx="30" cy="30" r="27" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+              <polygon points="30,8 52,46 8,46" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="30" cy="34" r="9"   fill="currentColor" opacity="0.1"/>
+              <circle cx="30" cy="34" r="4.5" fill="currentColor" opacity="0.6"/>
+            </svg>
+          </div>
+          <h3 class="card-title" data-i18n="about.card1.title">Materia Prima</h3>
+          <p class="card-desc" data-i18n="about.card1.desc">
+            Cada ingrediente tiene un precio de mercado en constante fluctuación. La primera ley de la alquimia: conoce tu entrada.
+          </p>
+        </article>
+
+        <article class="about-card" role="listitem">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 60 60" width="48" height="48" fill="none">
+              <circle cx="30" cy="30" r="27" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+              <path d="M30 13 L47 30 L30 47 L13 30 Z" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="30" cy="30" r="7" fill="currentColor" opacity="0.55"/>
+              <line x1="30" y1="3"  x2="30" y2="13" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+              <line x1="30" y1="47" x2="30" y2="57" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+            </svg>
+          </div>
+          <h3 class="card-title" data-i18n="about.card2.title">El Proceso</h3>
+          <p class="card-desc" data-i18n="about.card2.desc">
+            La Alquimia Cocina transforma recursos crudos en comida consumible. El margen vive en la diferencia entre lo que gastas y lo que vendes.
+          </p>
+        </article>
+
+        <article class="about-card" role="listitem">
+          <div class="card-icon" aria-hidden="true">
+            <svg viewBox="0 0 60 60" width="48" height="48" fill="none">
+              <circle cx="30" cy="30" r="27" stroke="currentColor" stroke-width="1.2" opacity="0.3"/>
+              <polygon points="30,8 52,50 8,50"  stroke="currentColor" stroke-width="1.5"/>
+              <polygon points="30,52 8,10 52,10" stroke="currentColor" stroke-width="1.2" opacity="0.5"/>
+              <circle cx="30" cy="30" r="5.5" fill="currentColor" opacity="0.65"/>
+            </svg>
+          </div>
+          <h3 class="card-title" data-i18n="about.card3.title">El Beneficio</h3>
+          <p class="card-desc" data-i18n="about.card3.desc">
+            Identifica qué recetas generan más plata, qué recursos son cuello de botella y qué tier maximiza tu retorno.
+          </p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CALCULATOR
+  ══════════════════════════════════════ -->
+  <section id="calculator" class="section-standard section-calculator" aria-labelledby="calc-heading">
+    <div class="section-inner">
+
+      <header class="section-header">
+        <span class="section-label scroll-element" data-i18n="calc.label">Herramienta</span>
+        <h2 id="calc-heading" class="section-title scroll-element" data-i18n="calc.title">La calculadora
+del alquimista</h2>
+        <p class="section-subtitle scroll-element" data-i18n="calc.subtitle">
+          Ingresa precios del mercado para cada material y descubre el verdadero potencial de cada receta.
+        </p>
+      </header>
+
+      <div class="calculator-container scroll-element" role="region" aria-label="Calculadora de refinamiento">
+
+        <!-- Row 1: Controls -->
+        <div class="calc-controls">
+          <div class="ctrl-group">
+            <label for="tier-select" class="ctrl-label" data-i18n="calc.tierLabel">Nivel (Tier)</label>
+            <div class="select-wrapper">
+              <select id="tier-select" class="calc-select">
+                <option value="all" data-i18n="calc.allTiers">Todos los niveles</option>
+                <option value="3">Tier 3</option>
+                <option value="4">Tier 4</option>
+                <option value="5">Tier 5</option>
+                <option value="6">Tier 6</option>
+                <option value="7">Tier 7</option>
+                <option value="8">Tier 8</option>
+              </select>
+              <span class="select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <label for="recipe-select" class="ctrl-label" data-i18n="calc.recipeLabel">Receta</label>
+            <div class="select-wrapper">
+              <select id="recipe-select" class="calc-select">
+                <!-- populated by calculator.js -->
+              </select>
+              <span class="select-arrow" aria-hidden="true">▾</span>
+            </div>
+          </div>
+
+          <div class="ctrl-group">
+            <label for="qty-input" class="ctrl-label" data-i18n="calc.qtyLabel">Cantidad</label>
+            <input type="number" id="qty-input" class="calc-input" min="1" max="9999" value="1">
+          </div>
+
+          <div class="ctrl-group">
+            <label for="fee-input" class="ctrl-label" data-i18n="calc.feeLabel">Fee de uso (%)</label>
+            <input type="number" id="fee-input" class="calc-input" min="0" max="100" step="0.1" value="0">
+          </div>
+        </div>
+
+        <!-- Row 2: Recipe info + materials -->
+        <div class="calc-recipe-info" id="recipe-info">
+          <div class="recipe-header">
+            <div class="recipe-name-badge">
+              <span class="recipe-tier-badge" id="recipe-tier-display">T3</span>
+              <h3 class="recipe-name" id="recipe-name-display" data-i18n="calc.selectRecipe">
+                Selecciona una receta
+              </h3>
+            </div>
+            <div class="recipe-output-info">
+              <span class="output-label" data-i18n="calc.output">Produce:</span>&nbsp;
+              <span id="recipe-output-qty">1x</span>&nbsp;
+              <span id="recipe-output-name"></span>
+            </div>
+          </div>
+
+          <div class="materials-section">
+            <h4 class="materials-title" data-i18n="calc.materials">Materiales requeridos</h4>
+            <div class="materials-grid" id="materials-grid">
+              <p class="material-empty" data-i18n="calc.noRecipe">
+                Selecciona una receta para ver los materiales
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Pricing panel -->
+        <div class="calc-pricing-panel" id="pricing-panel">
+
+          <!-- Left: Material price inputs -->
+          <div class="pricing-inputs" id="pricing-inputs">
+            <div class="materials-title" data-i18n="calc.matPrice" style="margin-bottom:.75rem;">
+              Precio por unidad
+            </div>
+            <p class="material-empty" style="padding:0;font-size:.7rem;" data-i18n="calc.noRecipe">
+              Selecciona una receta para ver los materiales
+            </p>
+          </div>
+
+          <!-- Divider -->
+          <div class="pricing-divider" aria-hidden="true"></div>
+
+          <!-- Right: Sell price + results -->
+          <div class="pricing-output">
+            <div class="price-row">
+              <label for="sell-price" class="price-label" data-i18n="calc.sellPrice">
+                Precio de venta (unidad)
+              </label>
+              <div class="price-input-wrap">
+                <input type="number" id="sell-price" class="calc-input price-input"
+                       min="0" placeholder="0">
+                <span class="price-currency" data-i18n="calc.silver">plata</span>
+              </div>
+            </div>
+            <div class="price-row">
+              <label for="tax-input" class="price-label" data-i18n="calc.taxLabel">
+                Impuesto de mercado (%)
+              </label>
+              <div class="price-input-wrap">
+                <input type="number" id="tax-input" class="calc-input price-input"
+                       min="0" max="100" step="0.5" value="6">
+                <span class="price-currency">%</span>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div class="calc-result" role="region" aria-label="Resultados del cálculo">
+              <div class="result-row">
+                <span class="result-label" data-i18n="calc.totalCost">Costo total</span>
+                <span class="result-value" id="result-cost">— plata</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label" data-i18n="calc.totalRevenue">Ingreso bruto</span>
+                <span class="result-value" id="result-revenue">— plata</span>
+              </div>
+              <div class="result-row result-profit-row">
+                <span class="result-label" data-i18n="calc.profit">Ganancia neta</span>
+                <span class="result-value result-profit neutral" id="result-profit">— plata</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label" data-i18n="calc.roi">ROI</span>
+                <span class="result-value" id="result-roi" style="color:var(--text-muted);">—</span>
+              </div>
+              <div class="result-bar" aria-hidden="true">
+                <div class="result-bar-fill" id="result-bar-fill"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       TIERS GUIDE
+  ══════════════════════════════════════ -->
+  <section id="tiers" class="section-standard" aria-labelledby="tiers-heading">
+    <div class="section-inner">
+
+      <header class="section-header">
+        <span class="section-label scroll-element" data-i18n="tiers.label">Guía</span>
+        <h2 id="tiers-heading" class="section-title scroll-element" data-i18n="tiers.title">El escalafón
+del maestro alquimista</h2>
+      </header>
+
+      <div class="tiers-timeline" role="list">
+
+        <!-- T3 -->
+        <article class="tier-entry scroll-element" role="listitem">
+          <div class="tier-marker" aria-hidden="true">
+            <div class="tier-badge">T3</div>
+            <div class="tier-line"></div>
+          </div>
+          <div class="tier-content">
+            <h3 class="tier-name" data-i18n="tiers.t3.name">El Aprendiz</h3>
+            <p class="tier-desc" data-i18n="tiers.t3.desc">
+              Los cimientos de toda economía culinaria. Pan y sopas simples — bajo margen, alto volumen, riesgo mínimo.
+            </p>
+            <div class="tier-recipes">
+              <span class="recipe-tag" data-i18n="tiers.t3.r1">Pan</span>
+              <span class="recipe-tag" data-i18n="tiers.t3.r2">Sopa de Nabo</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- T4 -->
+        <article class="tier-entry scroll-element" role="listitem">
+          <div class="tier-marker" aria-hidden="true">
+            <div class="tier-badge">T4</div>
+            <div class="tier-line"></div>
+          </div>
+          <div class="tier-content">
+            <h3 class="tier-name" data-i18n="tiers.t4.name">El Cocinero</h3>
+            <p class="tier-desc" data-i18n="tiers.t4.desc">
+              Primer acceso a recetas con múltiples ingredientes. El mercado empieza a recompensar la especialización.
+            </p>
+            <div class="tier-recipes">
+              <span class="recipe-tag" data-i18n="tiers.t4.r1">Sopa de Zanahoria</span>
+              <span class="recipe-tag" data-i18n="tiers.t4.r2">Ensalada de Frijoles</span>
+              <span class="recipe-tag" data-i18n="tiers.t4.r3">Tortilla de Huevo de Ganso</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- T5 -->
+        <article class="tier-entry scroll-element" role="listitem">
+          <div class="tier-marker" aria-hidden="true">
+            <div class="tier-badge">T5</div>
+            <div class="tier-line"></div>
+          </div>
+          <div class="tier-content">
+            <h3 class="tier-name" data-i18n="tiers.t5.name">El Artesano</h3>
+            <p class="tier-desc" data-i18n="tiers.t5.desc">
+              Los ingredientes exóticos entran en juego. Azafrán, calabaza, cordero — la complejidad comienza a pagarse.
+            </p>
+            <div class="tier-recipes">
+              <span class="recipe-tag" data-i18n="tiers.t5.r1">Sopa de Calabaza</span>
+              <span class="recipe-tag" data-i18n="tiers.t5.r2">Ensalada de Hierbas</span>
+              <span class="recipe-tag" data-i18n="tiers.t5.r3">Estofado de Cordero</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- T6 -->
+        <article class="tier-entry scroll-element" role="listitem">
+          <div class="tier-marker" aria-hidden="true">
+            <div class="tier-badge">T6</div>
+            <div class="tier-line"></div>
+          </div>
+          <div class="tier-content">
+            <h3 class="tier-name" data-i18n="tiers.t6.name">El Maestro</h3>
+            <p class="tier-desc" data-i18n="tiers.t6.desc">
+              La carne entra en juego. Los buffs de comida de este tier son codiciados en zonas rojas y negras — el mercado lo sabe.
+            </p>
+            <div class="tier-recipes">
+              <span class="recipe-tag" data-i18n="tiers.t6.r1">Sándwich de Cabra</span>
+              <span class="recipe-tag" data-i18n="tiers.t6.r2">Tortilla de Cerdo</span>
+              <span class="recipe-tag" data-i18n="tiers.t6.r3">Ensalada de Ternera</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- T7 -->
+        <article class="tier-entry scroll-element" role="listitem">
+          <div class="tier-marker" aria-hidden="true">
+            <div class="tier-badge">T7</div>
+            <div class="tier-line"></div>
+          </div>
+          <div class="tier-content">
+            <h3 class="tier-name" data-i18n="tiers.t7.name">El Gran Maestro</h3>
+            <p class="tier-desc" data-i18n="tiers.t7.desc">
+              Recetas de alta complejidad para jugadores que controlan la cadena de suministro. El margen es proporcional al riesgo.
+            </p>
+            <div class="tier-recipes">
+              <span class="recipe-tag" data-i18n="tiers.t7.r1">Estofado de Ternera</span>
+              <span class="recipe-tag" data-i18n="tiers.t7.r2">Empanada de Cabra</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- T8 -->
+        <article class="tier-entry scroll-element" role="listitem">
+          <div class="tier-marker" aria-hidden="true">
+            <div class="tier-badge tier-badge--legendary">T8</div>
+            <div class="tier-line tier-line--last"></div>
+          </div>
+          <div class="tier-content">
+            <h3 class="tier-name" data-i18n="tiers.t8.name">El Alquimista Legendario</h3>
+            <p class="tier-desc" data-i18n="tiers.t8.desc">
+              La cúspide del arte culinario. Recetas avalónicas con ingredientes de zonas de muerte. Para los que dominan el juego económico completo.
+            </p>
+            <div class="tier-recipes">
+              <span class="recipe-tag recipe-tag--legendary" data-i18n="tiers.t8.r1">Estofado de Ternera Avalónico</span>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FEATURES / CTA SECTION (parallax BG)
+  ══════════════════════════════════════ -->
+  <section id="features" class="section-fullscreen section-cta" aria-labelledby="features-heading">
+
+    <!-- Reuses hero SVG background structure -->
+    <div class="hero-bg-container" aria-hidden="true">
+      <div class="features-bg-art hero-bg-art">
+        <svg class="hero-svg-bg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <radialGradient id="bgGrad2" cx="50%" cy="50%" r="70%">
+              <stop offset="0%"   stop-color="#1A0E04" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#0B0906" stop-opacity="1"/>
+            </radialGradient>
+          </defs>
+          <rect width="1440" height="900" fill="url(#bgGrad2)"/>
+          <circle cx="720" cy="450" r="380" fill="none" stroke="#D4A843" stroke-width="0.5" class="hero-ring ring-1"/>
+          <circle cx="720" cy="450" r="280" fill="none" stroke="#D4A843" stroke-width="0.4" class="hero-ring ring-2"/>
+          <polygon points="720,80 1100,760 340,760"  fill="none" stroke="#D4A843" stroke-width="0.7" class="hero-geo"/>
+          <polygon points="720,820 340,140 1100,140" fill="none" stroke="#D4A843" stroke-width="0.5" class="hero-geo"/>
+          <polygon points="720,360 800,405 800,495 720,540 640,495 640,405"
+                   fill="none" stroke="#D4A843" stroke-width="1.8" class="hero-hex"/>
+          <circle cx="720" cy="80"  r="4" fill="#D4A843" class="orbit-dot"/>
+          <circle cx="1100" cy="760" r="3" fill="#C9784A" class="orbit-dot"/>
+          <circle cx="340"  cy="760" r="3" fill="#C9784A" class="orbit-dot"/>
+        </svg>
+      </div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+    </div>
+
+    <div class="features-content">
+      <span class="section-label scroll-element" data-i18n="features.label">El Desafío</span>
+      <h2 id="features-heading" class="section-title scroll-element" data-i18n="features.title">El mercado no espera
+a los que improvisan</h2>
+      <p class="hero-desc scroll-element" data-i18n="features.desc">
+        Mientras otros adivinan los precios, tú calculas. Mientras otros pierden plata en recetas ineficientes,
+        tú ya sabes cuáles valen la pena antes de encender el fogón.
+      </p>
+      <div class="scroll-element">
+        <a href="#calculator" class="btn-primary">
+          <span data-i18n="features.cta">Abrir calculadora</span>
+          <span class="btn-glow" aria-hidden="true"></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FOOTER (§7.B anatomy)
+  ══════════════════════════════════════ -->
+  <footer id="footer" role="contentinfo">
+    <div class="footer-inner">
+
+      <p class="footer-brand scroll-element" data-i18n="brand">ALQUIMIA COCINA</p>
+
+      <p class="footer-tagline scroll-element" data-i18n="footer.tagline">
+        Calculadora de Refinamiento · Albion Online
+      </p>
+
+      <div class="footer-divider scroll-element" aria-hidden="true"></div>
+
+      <nav class="footer-nav scroll-element" aria-label="Navegación de pie de página">
+        <a href="#hero"       data-i18n="menu.home">Inicio</a>
+        <a href="#calculator" data-i18n="menu.calculator">Calculadora</a>
+        <a href="#tiers"      data-i18n="menu.tiers">Niveles</a>
+        <a href="#about"      data-i18n="menu.about">Acerca de</a>
+      </nav>
+
+      <div class="footer-email scroll-element">
+        <button id="email-btn" data-email="alquimia.cocina@albion.gg" aria-label="Copiar correo electrónico">
+          <span class="email-text">alquimia.cocina@albion.gg</span>
+          <span class="email-feedback" data-i18n="footer.copied">Copiado ✓</span>
+        </button>
+        <a href="mailto:alquimia.cocina@albion.gg" class="email-mobile-link" aria-label="Enviar correo">
+          alquimia.cocina@albion.gg
+        </a>
+      </div>
+
+      <p class="footer-copy scroll-element" data-i18n="footer.copy">
+        © 2025 Alquimia Cocina. No afiliado con Sandbox Interactive GmbH.
+      </p>
+
+    </div>
+  </footer>
+
+</div><!-- /#app-content -->
+</body>
+</html>
